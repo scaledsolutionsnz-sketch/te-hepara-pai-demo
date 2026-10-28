@@ -23,6 +23,8 @@ ICONS = {
  "book": '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6"/>',
  "calendar": '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
  "plus": '<path d="M12 5v14M5 12h14"/>',
+ "close": '<path d="M6 6l12 12M18 6 6 18"/>',
+ "left": '<path d="M19 12H5M11 6l-6 6 6 6"/>',
  "menu": '<path d="M4 7h16M4 12h16M4 17h16"/>',
  "arrow": '<path d="M5 12h14M13 6l6 6-6 6"/>',
  "directions": '<path d="m12 3 9 9-9 9-9-9z"/><path d="M9 13v-2h5V9l2.5 2.5L14 14v-2"/>',
@@ -84,6 +86,12 @@ def img(name, alt, sizes="(min-width: 900px) 50vw, 100vw", eager=False, cls="", 
     return (f'<img src="img/{name}-1920.webp" srcset="img/{name}-1080.webp 1080w, img/{name}-1920.webp 1920w" '
             f'sizes="{sizes}" width="{w}" height="{h}" alt="{alt}" {load} decoding="async"{c}{extra}>')
 
+def hero_img(name, alt, eager=False, cls="", extra=""):
+    load = 'fetchpriority="high" loading="eager"' if eager else 'loading="lazy"'
+    c = f' class="{cls}"' if cls else ""
+    return (f'<img src="img/hero-{name}-2560.webp" srcset="img/hero-{name}-1280.webp 1280w, img/hero-{name}-2560.webp 2560w" '
+            f'sizes="100vw" width="2560" height="1440" alt="{alt}" {load} decoding="async"{c}{extra}>')
+
 # ---------------------------------------------------------------- partials
 POUTAMA_MARK = ('<svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true">'
                 '<rect width="34" height="34" rx="8" fill="#a3301f"/>'
@@ -106,12 +114,12 @@ def head(title, desc, path, og="te-rangamarie-marae"):
 <meta property="og:url" content="{url}">
 <meta property="og:image" content="{SITE}/img/{og}-1920.webp">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0f281d">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Young+Serif&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css?v=3">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css?v=5">
 '''
 
 CUR = ' aria-current="page"'
@@ -172,9 +180,10 @@ def contact_section():
 '''
 
 def footer():
+    X, L, R = icon('close'), icon('left'), icon('arrow')
     navl = "".join(f'<li><a href="{h}">{t}</a></li>' for h, t in NAV)
     return f'''</main>
-<div class="poutama cream" style="background-color:var(--green-deep)" aria-hidden="true"></div>
+
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
@@ -193,20 +202,23 @@ def footer():
     <div class="footer-base"><span>&copy; <span id="year">2026</span> Te Hepara Pai Church, Masterton</span><span>Ngā mihi nui ki a koutou katoa</span></div>
   </div>
 </footer>
-<script src="js/site.js?v=3" defer></script>
+<dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+  <button class="lb-btn lb-close" type="button" aria-label="Close photo">{X}</button>
+  <button class="lb-btn lb-prev" type="button" aria-label="Previous photo">{L}</button>
+  <button class="lb-btn lb-next" type="button" aria-label="Next photo">{R}</button>
+  <figure><img src="" alt=""><figcaption></figcaption></figure>
+</dialog>
+<script src="js/site.js?v=5" defer></script>
 </body>
 </html>
 '''
 
 def page_hero(title, lede, image, alt):
     return f'''
-<section class="page-hero">
-  <div class="wrap page-hero-grid">
-    <div><h1>{title}</h1><p>{lede}</p></div>
-    <figure>{img(image, alt, eager=True)}</figure>
-  </div>
+<section class="hero">
+  <div class="hero-media">{hero_img(image, alt, eager=True, cls="pos-top" if image == "priests" else "")}</div>
+  <div class="wrap hero-text"><div class="hero-card"><h1>{title}</h1><p class="hero-lede">{lede}</p></div></div>
 </section>
-<div class="poutama" aria-hidden="true" style="background-color:var(--green-deep)"></div>
 '''
 
 def write(path, title, desc, body, og="te-rangamarie-marae"):
@@ -232,15 +244,14 @@ def review_cards():
     return "".join(out)
 
 hero_slides = [
-    ("sunday-service", "The congregation gathered after a Sunday service"),
-    ("te-rangamarie-marae", "Te Rangamarie Marae, beside the church on Cole Street"),
+    ("sunday", "The congregation gathered after a Sunday service"),
+    ("marae", "Te Rangamarie Marae, beside the church on Cole Street"),
     ("procession", "A young member carries the processional cross"),
-    ("altar-flowers", "Flowers on the table inside the church"),
+    ("service", "A reading at the altar during the service"),
 ]
 slides = []
 for k, (n, a) in enumerate(hero_slides):
-    s = img(n, a, sizes="(min-width: 900px) 45vw, 100vw", eager=(k == 0), cls="is-on" if k == 0 else "",
-            extra=f' data-caption="{a}"')
+    s = hero_img(n, a, eager=(k == 0), cls="is-on" if k == 0 else "", extra=f' data-caption="{a}"')
     slides.append(s)
 
 faq = [
@@ -269,14 +280,22 @@ gallery_home = [
     ("altar-flowers", "Flowers and prayer books on the table inside the church"),
     ("priests-and-server", "Clergy with a young server at the altar"),
     ("atrium-children", "Children enjoying an Atrium activity"),
+    ("paint-job", "Young members outside the freshly painted church"),
+    ("liz-greville", "Rev Liz Greville at the altar"),
+    ("bishop-wai-quayle", "Bishop Waitohiariki Quayle"),
+    ("richard-jackson", "Deacon Richard Jackson reading at the lectern"),
+    ("emily-bartlett", "Rev Emily Bartlett at the lectern"),
 ]
 gallery_html = "".join(
-    f'<figure class="reveal">{img(n, a, sizes="(min-width: 900px) 33vw, 50vw")}</figure>' for n, a in gallery_home)
+    f'<figure class="reveal"><button type="button" data-full="img/{n}-1920.webp" aria-label="View larger: {a}">{img(n, a, sizes="(min-width: 900px) 33vw, 50vw")}</button></figure>' for n, a in gallery_home)
 
 home = f'''
 <section class="hero" aria-labelledby="hero-h">
-  <div class="wrap hero-grid">
-    <div>
+  <div class="hero-media slides" aria-roledescription="slideshow" aria-label="Photos from Te Hepara Pai">
+    {"".join(slides)}
+  </div>
+  <div class="wrap hero-text">
+    <div class="hero-card">
       <h1 id="hero-h">A Māori Anglican whānau in the heart of Masterton</h1>
       <p class="hero-lede">Join us on Sunday at <strong>9:30 am</strong>, <strong>131 Cole Street</strong>. Readings and prayers are shared by the whole congregation, hymns are sung in Maori and English, and morning tea follows.</p>
       <div class="hero-ctas">
@@ -284,14 +303,10 @@ home = f'''
         <a class="btn btn-ghost" href="{DIRECTIONS}" target="_blank" rel="noopener">{icon("directions")}Get directions</a>
       </div>
       <a class="rating-badge" href="{GOOGLE_LISTING}" target="_blank" rel="noopener">{stars(RATING, "Rated 4.3 out of 5")}<span><strong>{RATING}</strong> from {COUNT} Google reviews</span></a>
-    </div>
-    <div class="hero-stack" aria-roledescription="slideshow" aria-label="Photos from Te Hepara Pai">
-      {"".join(slides)}
-      <p class="hero-caption" aria-live="off">{hero_slides[0][1]}</p>
+      <p class="hero-caption">{hero_slides[0][1]}</p>
     </div>
   </div>
 </section>
-<div class="poutama" aria-hidden="true" style="background-color:var(--green-deep)"></div>
 
 <section class="visit" id="visit" aria-label="Join us on Sunday">
   <div class="wrap">
@@ -365,11 +380,11 @@ home = f'''
 <section class="section bone" aria-labelledby="explore-h">
   <div class="wrap">
     <div class="section-head reveal"><h2 id="explore-h">Explore our community</h2></div>
-    <div class="explore">
-      <a class="tile reveal" href="who-we-are.html">{img("procession", "", sizes="(min-width: 760px) 66vw, 100vw")}<div class="tile-body"><h3>Who we are</h3><p>Our leaders, our congregation and the voices of our people.</p></div></a>
-      <a class="tile reveal" href="atrium.html">{img("atrium-children", "", sizes="(min-width: 760px) 33vw, 100vw")}<div class="tile-body"><h3>Atrium</h3><p>A gentle, guided programme for children on Thursdays.</p></div></a>
-      <a class="tile reveal" href="marae.html">{img("te-rangamarie-marae", "", sizes="(min-width: 760px) 33vw, 100vw")}<div class="tile-body"><h3>Te Rangamarie Marae</h3><p>Book our wharenui and wharekai for hui, wānanga and retreats.</p></div></a>
-      <a class="tile reveal" href="events.html">{img("paint-job", "", sizes="(min-width: 760px) 66vw, 100vw")}<div class="tile-body"><h3>Updates and events</h3><p>Upcoming services and news, like our amazing new paint job.</p></div></a>
+    <div class="cards">
+      <a class="card reveal" href="who-we-are.html"><figure>{img("priests-and-server", "Two of our priests with a young server", sizes="(min-width: 760px) 50vw, 100vw")}</figure><h3>Who we are{icon("arrow")}</h3><p>Our leaders, our congregation and the voices of our people.</p></a>
+      <a class="card reveal" href="atrium.html"><figure>{img("atrium-children", "Children at an Atrium session", sizes="(min-width: 760px) 50vw, 100vw")}</figure><h3>Atrium{icon("arrow")}</h3><p>A gentle, guided programme for children on Thursdays.</p></a>
+      <a class="card reveal" href="marae.html"><figure>{img("te-rangamarie-marae", "Te Rangamarie Marae", sizes="(min-width: 760px) 50vw, 100vw")}</figure><h3>Te Rangamarie Marae{icon("arrow")}</h3><p>Book our wharenui and wharekai for hui, wānanga and retreats.</p></a>
+      <a class="card reveal" href="events.html"><figure>{img("paint-job", "Young members outside the newly painted church", sizes="(min-width: 760px) 50vw, 100vw")}</figure><h3>Updates and events{icon("arrow")}</h3><p>Upcoming services and news, like our amazing new paint job.</p></a>
     </div>
   </div>
 </section>
@@ -416,7 +431,7 @@ def phone_link(p, t):
 
 who = page_hero("Who we are",
     "A multi-cultural congregation in Te Hui Amorangi ki Te Upoko o te Ika, led by a small ministry team who serve alongside Bishop Waitohiariki.",
-    "procession", "A young member of the congregation carries the processional cross") + f'''
+    "priests", "Two of our priests with a young server at the altar") + f'''
 <section class="section" aria-labelledby="lead-h">
   <div class="wrap">
     <div class="section-head reveal"><h2 id="lead-h">Leadership</h2></div>
@@ -509,7 +524,7 @@ write("who-we-are.html", "Who we are | Te Hepara Pai, Masterton",
 # ================================================================ ATRIUM
 atrium = page_hero("Atrium",
     "Atrium is a gentle, guided program for children, helping them listen to God, learn the stories of our faith, and grow as a community.",
-    "atrium-children", "Children smiling during an Atrium session") + f'''
+    "atrium", "Children smiling during an Atrium session") + f'''
 <section class="visit" aria-label="Atrium at a glance">
   <div class="wrap">
     <div class="visit-card">
@@ -569,7 +584,7 @@ write("atrium.html", "Atrium for children | Te Hepara Pai, Masterton",
 # ================================================================ MARAE
 marae = page_hero("Te Rangamarie Marae",
     "A warm, welcoming space for hui, wānanga, retreats and community gatherings, right beside the church.",
-    "te-rangamarie-marae", "Te Rangamarie Marae with its red-trimmed wharenui and garden") + f'''
+    "marae", "Te Rangamarie Marae with its red-trimmed wharenui and garden") + f'''
 <section class="section" aria-labelledby="book-h">
   <div class="wrap split">
     <div class="reveal">
@@ -614,7 +629,7 @@ write("marae.html", "Te Rangamarie Marae | Te Hepara Pai, Masterton",
 # ================================================================ EVENTS
 events = page_hero("Updates and events",
     "Sunday services every week at 9:30 am, special services through the church year, and news from Te Hepara Pai.",
-    "sunday-service", "The congregation gathered inside the church") + f'''
+    "sunday", "The congregation gathered inside the church") + f'''
 <section class="section" aria-labelledby="up-h">
   <div class="wrap split" style="align-items:start">
     <div class="reveal">

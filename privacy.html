@@ -12,12 +12,12 @@
 <meta property="og:url" content="https://te-hepara-pai-demo.vercel.app/privacy.html">
 <meta property="og:image" content="https://te-hepara-pai-demo.vercel.app/img/te-rangamarie-marae-1920.webp">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0f281d">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Young+Serif&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css?v=3">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css?v=5">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -42,7 +42,7 @@
 <p><a href="index.html">Back to the home page</a></p>
 </div></section>
 </main>
-<div class="poutama cream" style="background-color:var(--green-deep)" aria-hidden="true"></div>
+
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
@@ -61,6 +61,12 @@
     <div class="footer-base"><span>&copy; <span id="year">2026</span> Te Hepara Pai Church, Masterton</span><span>Ngā mihi nui ki a koutou katoa</span></div>
   </div>
 </footer>
-<script src="js/site.js?v=3" defer></script>
+<dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+  <button class="lb-btn lb-close" type="button" aria-label="Close photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <button class="lb-btn lb-prev" type="button" aria-label="Previous photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+  <button class="lb-btn lb-next" type="button" aria-label="Next photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  <figure><img src="" alt=""><figcaption></figcaption></figure>
+</dialog>
+<script src="js/site.js?v=5" defer></script>
 </body>
 </html>
